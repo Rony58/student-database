@@ -1,0 +1,197 @@
+#include<stdio.h>
+#include<stdlib.h>
+#include<string.h>
+
+//Start Here All Function name//
+
+void addStudentDetails ();
+void studentRecord();
+void updateStudent ();
+void findStudent ();
+void delete();
+
+//End Here All Function name//
+/*----------------------------*/
+//Start Here All Variable name//
+
+struct student
+{
+  char full_name[20];
+  char vill[20];
+  float per, cgpa;
+  int student_ID,roll_no;
+  int Contact_Number;
+
+};
+
+//End Here All Variable name//
+/*----------------------------*/
+//Start Document Showing Menu//
+int main ()
+{
+  int choice;
+  while (choice != 5)
+    {
+      printf ("\t\t\t\t============Student DB==============");
+      printf ("\n\n\n\t\t\t\t 1. Add Student Details.\n");
+      printf ("\t\t\t\t 2. Student Details Record.\n");
+      printf ("\t\t\t\t 3. Find Student.\n");
+      printf ("\t\t\t\t 4. Update Student details.\n");
+      printf ("\t\t\t\t 5. Exit Here.\n");
+      printf ("\t\t\t\t_________________________________\n");
+          printf("\t\t\t\tChoice one: ");
+      scanf ("%d", &choice);
+
+      switch (choice)
+	{
+	  case 1:
+	     addStudentDetails ();
+	     break;
+
+	  case 2:
+	      studentRecord();
+	      break;
+
+	  case 3:
+	      findStudent ();
+	      break;
+      case 4:
+	      updateStudent ();
+	      break;
+	}
+    }
+    return 1;
+}
+
+//End Document Showing Menu//
+/*----------------------------*/
+//Start Student Details//
+void
+addStudentDetails ()
+{
+  char another;
+  FILE *fp;
+  struct student info;
+  do
+    {
+      fp = fopen ("student_info.txt", "a");
+       printf ("\n\t\t\t\t=====ADD STUDENT INFORMATION=====\n\n\n");
+      printf ("\n\t\t\t Enter the Full Name: ");
+      scanf("%s",info.full_name);
+      printf("\n\t\t\t Enter Your ID Number: ");
+      scanf("%d", &info.student_ID);
+      printf("\n\t\t\t Enter your CGPA: ");
+      scanf("%f", &info.cgpa);
+      printf("\n\t\t\t Enter your Contact Number: ");
+      scanf("%d",&info.Contact_Number);
+
+      printf("\n\t\t\t_______________________________________\n");
+
+      if(fp==NULL){
+          printf ("\n\t\t\t OPps! File Can't Open.Try Again.\n");
+      }else{
+          printf("\n\t\t\t\tStudent Data Successfully Store.\n");
+      }
+     fwrite(&info,sizeof(info),1,fp);
+     fclose(fp);
+     printf("\n\t\t\tDo you want add another student details?(y/n):");
+     scanf("%s",&another);
+    }
+  while (another=='y' || another=='Y');
+ while(another=='n' || another=='N'){
+    exit(0);
+ }
+  }
+//End Student Details//
+/*_________________________*/
+//Start Student Record//
+void studentRecord(){
+    FILE *fp;
+    struct student info;
+    fp=fopen("student_info.txt","r");
+     printf ("\t\t\t\t=====Srudent Details Record=====\n\n\n");
+     if(fp==NULL){
+         printf ("\t\t\t\t OPps! File Can't Open.Try Again.\n");
+     }else{
+         printf("\t\t\t\tRecords.\n");
+         printf("\t\t\t\t______________________________\n\n");
+     }
+     while(fread(&info,sizeof(struct student),1,fp)){
+         printf("\n\t\t\t\tStudent Name     : %s", info.full_name);
+         printf("\n\t\t\t\tStudent ID       : %d", info.student_ID);
+         printf("\n\t\t\t\tStudent CGPA     : %f", info.cgpa);
+         printf("\n\t\t\t\tContact Number   : %d", info.Contact_Number);
+         printf("\n\t\t\t\t_________________________________________\n");
+
+     }
+     fclose(fp);
+     //getch();
+}
+//End Student Record//
+/*____________________________*/
+//Start Find Student //
+void findStudent(){
+    FILE *fp;
+    struct student info;
+    int student_ID, founnd=0;
+    fp=fopen("student_info.txt","r");
+    printf ("\t\t\t\t=====Search Student By ID=====\n\n\n");
+    printf("\t\t\tEnter ID Number : ");
+    scanf("%d", &student_ID);
+
+    while(fread(&info,sizeof(struct student),1,fp)){
+            if(info.student_ID==student_ID){
+                founnd=1;
+                printf("\n\t\t\t\tStudent Name     : %s", info.full_name);
+                printf("\n\t\t\t\tStudent ID       : %d", info.student_ID);
+                printf("\n\t\t\t\tStudent CGPA     : %f", info.cgpa);
+                printf("\n\t\t\t\tContact Number   : %d", info.Contact_Number);
+                printf("\n\t\t\t\t_________________________________________\n");
+            }
+
+     }
+     if(!founnd){
+        printf("\n\t\t\tStudent Data Not Found.\n");
+     }
+     fclose(fp);
+}
+//End Find Student //
+/*__________________________*/
+
+//Start Update Student Data //
+void updateStudent (){
+
+      struct student info;
+      FILE *fp;
+      char full_name1[20];
+      int flag=0;
+      fp=fopen("student_info.txt","r");
+      if(fp==NULL){
+        printf("\t\t\t\tCan't Open File.");
+        exit(1);
+        fclose(fp);
+      }
+      printf("\t\t\t\tEnter the name you want to update: ");
+      scanf("%s",&full_name1);
+     while(fread(&info,sizeof(info),1,fp)==1){
+        if(strcmp(info.full_name,full_name1)==0){
+            printf("\t\t\t\tEnter new data==>\n");
+            printf("\t\t\t\tEnter Name, ID, Contact Number, CGPA: ");
+            scanf("%s %d %d %f",&info.full_name,&info.student_ID,&info.Contact_Number,&info.cgpa);
+            fseek(fp,-sizeof(info),1);
+            fwrite(&info,sizeof(info),1,fp);
+            flag=0;
+            break;
+        }
+     }
+    if(flag==0){
+        printf("\n\t\t\t\tUpdate Successfully..!!\n");
+    }
+    else{
+         printf("\t\t\t\tRecord Not Found!!\n");
+    }
+
+    fclose(fp);
+  }
+//End Update Student Data //
+
